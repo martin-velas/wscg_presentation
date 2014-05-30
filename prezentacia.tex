@@ -29,41 +29,31 @@
 \begin{document}
 	\usenavigationsymbolstemplate{}
 	\title {Calibraton of RGB camera with Velodyne LiDAR}
-	\institute{Department of Computer Graphics and Multimedia FIT BUT \\\smallskip\texttt{\scriptsize ivelas@fit.vutbr.cz}}
+	\institute{Department of Computer Graphics and Multimedia
+	\\Faculty of Information Technology, Brno University of Technology
+	\\\smallskip\texttt{\scriptsize ivelas@fit.vutbr.cz}}
 	\author {Martin Velas, Michal Spanel, Zdenek Materna, Adam Herout}
+
 	\begin{frame}
 		\titlepage
-	\end{frame}
-	
-	\begin{frame}{Motivation}
- 		\begin{block}{Usage of the camera-LiDAR fusion}
-			\begin{itemize}
-				\item coloured point cloud (depth $+$ color)
-				\item description of the $3$D points by the image features
-				\item sensors must be calibrated
-			\end{itemize}
-		\end{block}
-
-		\begin{itemize}
-			\item position and orientation of LiDAR to the camera ($6$DoF)
-			\item $\Rightarrow$ calibration matrix (rotation $+$ translation)
-		\end{itemize}
-		
 		\begin{figure}[h]
 			\center
-			\includegraphics[width=0.55\textwidth]{fig/schema.png}
+			\subfloat{\includegraphics[height=0.25\textwidth]{fig/google-car.jpg}}
+			\quad\quad
+			\subfloat{\includegraphics[height=0.25\textwidth]{fig/velodyne_scan.png}}
 		\end{figure}
-			
 	\end{frame}
 	
-	\begin{frame}{Used sensors}
+	\begin{frame}{What is the Velodyne LiDAR?}
 		\begin{itemize}
-			\item RGB camera
-			\item \emph{Velodyne} LiDAR (laser radar)
+			\item \emph{LiDAR} $=$ Laser Imaging Detection and Ranging
+			\item laser radar
+			\item Velodyne:
 			\begin{itemize}
 				\item $360^{\circ}$ horizontal field of view
 				\item rotating beam ($10$ times per sec) 				
 				\item $32$ rays - each captures one "ring" of $3$D points
+				\item used also by Google Car 
 			\end{itemize}
 		\end{itemize}	
 		\begin{figure}[h]
@@ -75,11 +65,46 @@
 			\subfloat{\includegraphics[height=0.35\textwidth]{fig/robot.png}}
 		\end{figure}
 	\end{frame}
-	
-	\begin{frame}{Edge detection}
-		\begin{alertblock}{Assumption (proved)}		
+
+	\begin{frame}{Motivation}
+ 		\begin{block}{Usage of the camera-LiDAR fusion}
+			\begin{itemize}
+				\item coloured point cloud (depth $+$ color)
+				\item description of the $3$D points by the image features
+				\item sensors must be calibrated
+			\end{itemize}
+		\end{block}
+		
+		\begin{figure}[h]
+			\center
+			\includegraphics[width=0.45\textwidth]{fig/schema.png}
+		\end{figure}
+			
+ 		\begin{block}{What is the problem?}
+			\begin{itemize}
+				\item position and orientation of LiDAR to the camera ($6$DoF)
+				\item $\Rightarrow$ calibration matrix (rotation $+$ translation)
+			\end{itemize}
+ 		\end{block}
+	\end{frame}
+		
+	\begin{frame}{Example of coloured point cloud by fusion}
+		\begin{figure}[h]
+			\centering
+			\subfloat{
+				\includegraphics[height=0.23\textwidth]{fig/camera_image.png}\label{subfig:camera-img}}
+			\subfloat{
+				\includegraphics[height=0.23\textwidth]{fig/gray_cloud.png}\label{subfig:gray-scan}}
+			\\
+			\subfloat{
+				\includegraphics[width=0.72\textwidth]{fig/colored_cloud.png}\label{subfig:color-scan}}
+		\end{figure}
+	\end{frame}
+
+	\begin{frame}{Initial assumption}
+		\begin{alertblock}{Assumption (proved)}
 		\begin{itemize}
-			\item edges can be robustly detected in both camera image and Velodyne scan
+			\item ,,Edges can be robustly detected in both camera image and Velodyne scan''
 			\item \scriptsize{Levinson, J.; Thrun, S.: Automatic Online Calibration of Cameras and Lasers}
 		\end{itemize}
 		\end{alertblock}
@@ -91,7 +116,7 @@
 			\end{itemize}
 			\item in the LiDAR point cloud
 			\begin{itemize}
-			 	\item depth discontinuities of the neighbouring points in ring
+			 	\item depth discontinuities of neighbouring points in a ring
 			\end{itemize}
 		\end{itemize}
 			\begin{equation}
@@ -99,7 +124,7 @@
 			\end{equation}
 	\end{frame}
 
-	\begin{frame}{Calibration pipeline}
+	\begin{frame}{Overview of the calibration pipeline}
 		\begin{enumerate}
 			\item \emph{Coarse calibration}
 			\begin{enumerate}
@@ -113,9 +138,13 @@
 			\item \emph{Calibration refinement}
 			\begin{enumerate}
 				\item dense search in small subspace of all calibration parameters
-				\item pick the calibration solution based on the proposed criteria
+				\item pick the optimal calibration solution based on the proposed criteria
 			\end{enumerate}
 		\end{enumerate}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.35\textwidth]{fig/marker-side.jpg}
+		\end{figure}
 	\end{frame}
 
 	\begin{frame}{Coarse calibration -- marker selection}
@@ -153,7 +182,7 @@
 			\item thresholding of weak edges (points reduction $10k \rightarrow 100$)
 			\item detect $4$ spheres intersecting the plane \label{step:detection}
 			\item verification of the detections
-			\item if fails the point cloud is pruned and goto \ref{step:detection}
+			\item if the detection fails the point cloud is pruned and goto \ref{step:detection}
 		\end{enumerate}
 		\end{alertblock}
 
@@ -166,7 +195,7 @@
 			\subfloat[][pruning]{
 			\includegraphics[width=0.25\textwidth]{fig/detection-pc-generation.png}}
 			\quad
-			\subfloat[][verif. success]{
+			\subfloat[][verif. succeeded]{
 			\includegraphics[width=0.25\textwidth]{fig/detection-borders-ok.png}}
 		\end{figure}
 	\end{frame}
@@ -177,7 +206,7 @@
 			\includegraphics[width=0.99\textwidth]{fig/framework.pdf}
 		\end{figure}
 		\begin{itemize}
-			\item based on the [Levin13]
+			\item based on the Levin et al. (2013)
 			\item modification:
 			\begin{itemize}
 				\item averaging of all calibrations better than the coarse one
@@ -189,7 +218,7 @@
 	\begin{frame}{Calibration evaluation}
 		\begin{itemize}
 			\item \emph{edge cost function} $S_E$ -- cross correlation of edge image with projected $3$D points of edges
-			\item \emph{Inversed Distance Transform (IDT)} makes both edge image and the similarity criteria ``smoother''
+			\item \emph{Inversed Distance Transform (IDT)} makes both the edge image and the similarity criteria ``smoother''
 			$$
 				D_{i,j} = \alpha . E_{i,j} + (1-\alpha)\,.\,\underset{x,y}{max}\{ E_{x,y} . \gamma^{max(\vert x-i \vert, \vert y-j \vert)}\}
 			$$
@@ -201,7 +230,7 @@
 		
 		\begin{block}{Novel \emph{miscalibration projection error} $E_P$}
 			\begin{itemize}
-				\item scene segmentation (foreground/background)
+				\item automatic scene segmentation (foreground/background)
 				\item percentage of miss-projected $3$D points
 			\end{itemize}
 		\end{block}
