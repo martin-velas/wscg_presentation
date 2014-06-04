@@ -50,10 +50,8 @@
 			\item laser radar
 			\item Velodyne:
 			\begin{itemize}
-				\item $360^{\circ}$ horizontal field of view
-				\item rotating beam ($10$ times per sec) 				
+				\item rotating beam with $360^{\circ}$ horizontal field of view 				
 				\item $32$ rays - each captures one "ring" of $3$D points
-				\item used also by Google Car 
 			\end{itemize}
 		\end{itemize}	
 		\begin{figure}[h]
@@ -66,19 +64,37 @@
 		\end{figure}
 	\end{frame}
 
-	\begin{frame}{Motivation}
- 		\begin{block}{Usage of the camera-LiDAR fusion}
+	\begin{frame}{Usage of the camera-LiDAR fusion}
+ 		%\begin{block}{Usage of the camera-LiDAR fusion}
 			\begin{itemize}
 				\item coloured point cloud (depth $+$ color)
 				\item description of the $3$D points by the image features
-				\item sensors must be calibrated
+				%\item sensors must be calibrated
 			\end{itemize}
-		\end{block}
+		%\end{block}
 		
+			\begin{minipage}{0.18\textwidth}
 		\begin{figure}[h]
-			\center
-			\includegraphics[width=0.45\textwidth]{fig/schema.png}
+			\centering
+			\subfloat{
+				\includegraphics[width=1.0\textwidth]{fig/camera_image.png}\label{subfig:camera-img}}
+			\\
+			\subfloat{
+				\includegraphics[width=1.0\textwidth]{fig/gray_cloud.png}\label{subfig:gray-scan}}
 		\end{figure}
+			\end{minipage} \begin{minipage}{0.47\textwidth}
+		\begin{figure}[h]
+			\centering
+			\subfloat{
+				\includegraphics[width=1.0\textwidth]{fig/colored_cloud.png}\label{subfig:color-scan}}
+		\end{figure}
+			\end{minipage} \begin{minipage}{0.3\textwidth}
+		\begin{figure}[h]
+			\centering
+			\subfloat{
+			\includegraphics[width=1.0\textwidth]{fig/schema.png}}
+		\end{figure}
+			\end{minipage}
 			
  		\begin{block}{What is the problem?}
 			\begin{itemize}
@@ -88,19 +104,6 @@
  		\end{block}
 	\end{frame}
 		
-	\begin{frame}{Example of coloured point cloud by fusion}
-		\begin{figure}[h]
-			\centering
-			\subfloat{
-				\includegraphics[height=0.23\textwidth]{fig/camera_image.png}\label{subfig:camera-img}}
-			\subfloat{
-				\includegraphics[height=0.23\textwidth]{fig/gray_cloud.png}\label{subfig:gray-scan}}
-			\\
-			\subfloat{
-				\includegraphics[width=0.72\textwidth]{fig/colored_cloud.png}\label{subfig:color-scan}}
-		\end{figure}
-	\end{frame}
-
 	\begin{frame}{Initial assumption}
 		\begin{alertblock}{Assumption (proved)}
 		\begin{itemize}
@@ -127,51 +130,57 @@
 	\begin{frame}{Overview of the calibration pipeline}
 		\begin{enumerate}
 			\item \emph{Coarse calibration}
-			\begin{enumerate}
-				\item edge detection in the Velodyne point cloud and the camera image
-				\item $3$D marker detection (circles' centres and the radius)
-				\begin{itemize}
-					\item $\Rightarrow$ correspondences between image and point cloud
-				\end{itemize}
-				\item estimation of the geometrical transformation between sensors (translation only)
-			\end{enumerate}
-			\item \emph{Calibration refinement}
-			\begin{enumerate}
-				\item dense search in small subspace of all calibration parameters
-				\item pick the optimal calibration solution based on the proposed criteria
-			\end{enumerate}
-		\end{enumerate}
+			\begin{itemize}
+				\item deals with the large sensor displacement
+				%\item edge detection in the Velodyne point cloud and the camera image
+				\item $3$D marker detection %(circles' centres and the radius)
+				%\begin{itemize}
+				%	\item $\Rightarrow$ correspondences between image and point cloud
+				%\end{itemize}
+				\item estimation of the geometrical transformation between sensors %(translation only)
+			\end{itemize}
+
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=0.35\textwidth]{fig/marker-side.jpg}
+			\subfloat{
+			\includegraphics[width=0.35\textwidth]{fig/marker-side.jpg}}
+			\quad\quad			
+			\subfloat{
+			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-circles-velodyne.png}}
 		\end{figure}
+
+			\item \emph{Calibration refinement}
+			\begin{itemize}
+				\item more accurate calibration
+			\end{itemize}
+		\end{enumerate}
 	\end{frame}
 
-	\begin{frame}{Coarse calibration -- marker selection}
-		\setcounter{subfigure}{0}
-		\begin{figure}[h]
-			\centering
-			\subfloat[][]{
-			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-all-img.png}}
-			\quad
-			\subfloat[][]{
-			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-all-velodyne.png}}
-			\quad
-			\subfloat{
-			\includegraphics[width=0.07\textwidth]{fig/icon-error.png}}
-			
-			\medskip\medskip\medskip		
-			
-			\subfloat[][]{
-			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-circles-img.png}}
-			\quad
-			\subfloat[][]{
-			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-circles-velodyne.png}}
-			\quad
-			\subfloat{
-			\includegraphics[width=0.07\textwidth]{fig/icon-ok.png}}
-		\end{figure}
-	\end{frame}
+%	\begin{frame}{Coarse calibration -- marker selection}
+%		\setcounter{subfigure}{0}
+%		\begin{figure}[h]
+%			\centering
+%			\subfloat[][]{
+%			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-all-img.png}}
+%			\quad
+%			\subfloat[][]{
+%			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-all-velodyne.png}}
+%			\quad
+%			\subfloat{
+%			\includegraphics[width=0.07\textwidth]{fig/icon-error.png}}
+%			
+%			\medskip\medskip\medskip		
+%			
+%			\subfloat[][]{
+%			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-circles-img.png}}
+%			\quad
+%			\subfloat[][]{
+%			\includegraphics[width=0.35\textwidth]{fig/geom-shapes-circles-velodyne.png}}
+%			\quad
+%			\subfloat{
+%			\includegraphics[width=0.07\textwidth]{fig/icon-ok.png}}
+%		\end{figure}
+%	\end{frame}
 
 	\begin{frame}{Coarse calibration -- marker detection}
 		\begin{itemize}
@@ -201,55 +210,60 @@
 	\end{frame}
 
 	\begin{frame}{Fine calibration}
+%		\begin{figure}[h]
+%			\center
+%			\includegraphics[width=0.99\textwidth]{fig/framework.pdf}
+%		\end{figure}
+
+		\begin{itemize}
+			\item dense ``brute force'' search of all calibration parameters
+			\item in small subspace around the initial calibration 
+			\item average of all calibrations better than the initial one
+		\end{itemize}
+
+		\begin{block}{Edge cost function $S_E$}
+			\begin{itemize}
+				\item cross correlation of edge image with projected $3$D points of edges
+				\item \emph{Inversed Distance Transform (IDT)} makes both the edge image and the similarity criteria ``smoother''
+			\end{itemize}
+		\end{block}
+
 		\begin{figure}[h]
 			\center
-			\includegraphics[width=0.99\textwidth]{fig/framework.pdf}
+			\includegraphics[width=0.4\textwidth]{fig/edges_idt.png}
 		\end{figure}
-		\begin{itemize}
-			\item based on the Levin et al. (2013)
-			\item modification:
-			\begin{itemize}
-				\item averaging of all calibrations better than the coarse one
-				\item more robust
-			\end{itemize}
-		\end{itemize}
+
 	\end{frame}	
 
 	\begin{frame}{Calibration evaluation}
 		\begin{itemize}
-			\item \emph{edge cost function} $S_E$ -- cross correlation of edge image with projected $3$D points of edges
-			\item \emph{Inversed Distance Transform (IDT)} makes both the edge image and the similarity criteria ``smoother''
-			$$
-				D_{i,j} = \alpha . E_{i,j} + (1-\alpha)\,.\,\underset{x,y}{max}\{ E_{x,y} . \gamma^{max(\vert x-i \vert, \vert y-j \vert)}\}
-			$$
-			\begin{figure}[h]
-				\center
-				\includegraphics[width=0.4\textwidth]{fig/edges_idt.png}
-			\end{figure}
+			\item novel metric for evaluation of calibration methods
 		\end{itemize}
 		
-		\begin{block}{Novel \emph{miscalibration projection error} $E_P$}
+		\begin{block}{\emph{Miscalibration projection error} $E_P$}
 			\begin{itemize}
 				\item automatic scene segmentation (foreground/background)
 				\item percentage of miss-projected $3$D points
 			\end{itemize}
 		\end{block}
-	
+		
+		\begin{equation}
+			E_P = \dfrac{P_{corr}}{P_{all}}
+		\end{equation}
 	\end{frame}
 	
 	\begin{frame}{Results -- coarse calibration (vs. manual)}
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=0.7\textwidth]{fig/results.pdf}
-		\end{figure}
-
-		\begin{itemize}
-			\item invariance to the marker rotation of the:
+		\begin{block}{Invariance to the marker rotation}
 			\begin{itemize}
 				\item marker detection
 				\item and consequently the coarse calibration
 			\end{itemize}
-		\end{itemize}
+		\end{block}
+
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.7\textwidth]{fig/results.pdf}
+		\end{figure}
 	\end{frame}	
 	
 	\begin{frame}{Results -- fine calibration}
